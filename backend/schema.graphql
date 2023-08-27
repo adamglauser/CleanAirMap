@@ -89,3 +89,9 @@ type Room {
   name: String
   roomId: Int
 }
+
+type User {
+  email: String
+  id: Int
+  name: String
+}
