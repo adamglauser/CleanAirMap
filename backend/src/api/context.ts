@@ -34,11 +34,11 @@ const getAuthorizedUserID = async (req: IncomingMessage): Promise<number> => {
 
 export const createContext = async ({ req, res }: { req: IncomingMessage, res: OutgoingMessage }) => ({
     db: new PrismaDataAdaptor(),
-    uid: getAuthorizedUserID(req)
+    uid: await getAuthorizedUserID(req)
 })
 
 export const createLegacyContext = async ({ req, res }: { req: IncomingMessage, res: OutgoingMessage }) => ({
     db: new LegacyAdaptor(process.env.USE_LEGACY_ENDPOINT || ""),
-    uid: getAuthorizedUserID(req)
+    uid: await getAuthorizedUserID(req)
 });
 
