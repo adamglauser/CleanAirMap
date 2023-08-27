@@ -5,5 +5,5 @@ export interface ILocation {
 //TODO: fix name (or remove?) parameter name
     create(reading: LocationModel) : Promise<LocationModel | null>;
     getRooms(locationId : number) : Promise<RoomModel[] | null>;
-    getUser(locationId : number) : Promise<UserModel | null>;
+    getUser(locationId : number) : Promise<UserModel>;
 }
