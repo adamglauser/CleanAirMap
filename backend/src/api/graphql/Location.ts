@@ -63,7 +63,12 @@ export const Location = objectType({
                 return ctx.db.locationDAO.getRooms(parent.locationId);
             }
         })
-        t.int('created_id'),
+        t.nonNull.field('created_by', {
+            type: 'User',
+            resolve: (locationModel, _, ctx) => {
+                return ctx.db.locationDAO.getUser(locationModel.locationId);
+            }
+        }),
         t.datetime('created_at')
     },
 })
