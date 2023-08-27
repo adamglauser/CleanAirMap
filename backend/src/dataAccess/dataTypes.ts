@@ -1,3 +1,4 @@
+
 // TODO: figure out if this can be referenced from Prisma types
 export interface LocationModel {
     locationId: number
@@ -24,4 +25,12 @@ export interface RoomModel {
     name: string
     created_id: number
     created_at: Date
+}
+
+export interface UserModel {
+    id: number,
+    name : String
+    email : String
+    externalAuthId : String
+    externalAuthType : String
 }

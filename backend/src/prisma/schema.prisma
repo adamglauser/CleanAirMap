@@ -27,6 +27,7 @@ model Location {
   avgCo2      Float?
   rooms       Room[]
   created_id  Int
+  created_user User      @relation(fields: [created_id], references: [id])
   created_at  DateTime @default(now())
 }
 
@@ -55,7 +56,12 @@ model Reading {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  rooms    Room[]
-  readings Reading[]
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String
+  externalAuthId   String?
+  externalAuthType String?
+  rooms            Room[]
+  readings         Reading[]
+  locations        Location[]
 }

@@ -39,7 +39,11 @@ async function createUsers() {
         let user = await prisma.user.upsert({
             where: { id: created },
             update: {},
-            create: { id: created }
+            create: {
+                id: created,
+                name: getRandomString(2, 50),
+                email: getRandomString(2, 50),
+             }
         });
     }
     return prisma.user.findMany()

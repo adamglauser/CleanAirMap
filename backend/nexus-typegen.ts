@@ -1,4 +1,4 @@
-import { LocationModel, RoomModel } from "./src/dataAccess/dataTypes" 
+import { LocationModel, RoomModel, UserModel } from "./src/dataAccess/dataTypes" 
 
 import type { Context } from "./src/api/context"
 import type { core } from "nexus"
@@ -67,6 +67,7 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   Room: RoomModel;
+  User: UserModel;
 }
 
 export interface NexusGenInterfaces {
@@ -112,6 +113,11 @@ export interface NexusGenFieldTypes {
     name: string | null; // String
     roomId: number | null; // Int
   }
+  User: { // field return type
+    email: string | null; // String
+    id: number | null; // Int
+    name: string | null; // String
+  }
 }
 
 export interface NexusGenFieldTypeNames {
@@ -146,6 +152,11 @@ export interface NexusGenFieldTypeNames {
     locationId: 'Int'
     name: 'String'
     roomId: 'Int'
+  }
+  User: { // field return type name
+    email: 'String'
+    id: 'Int'
+    name: 'String'
   }
 }
 
