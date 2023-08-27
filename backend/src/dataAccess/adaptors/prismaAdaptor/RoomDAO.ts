@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IRoom } from '../../interfaces'
-import { RoomModel, LocationModel } from '../../dataTypes'
+import { RoomModel, LocationModel, UserModel } from '../../dataTypes'
 
 export class RoomDAO implements IRoom {
     client : PrismaClient;
@@ -8,7 +8,7 @@ export class RoomDAO implements IRoom {
     constructor(client : PrismaClient) {
         this.client = client;
     }
-    
+
     getById(id: number) : Promise<RoomModel | null> {
         return this.client.room.findUnique({ where: { roomId: id}});
     };
@@ -25,5 +25,9 @@ export class RoomDAO implements IRoom {
 
     getByLocation(location: LocationModel): Promise<RoomModel[] | null> {
         return this.client.location.findUnique( { where: { locationId: location.locationId } }).rooms();
+    }
+
+    getUser(roomId : number) : Promise<UserModel | null> {
+        return this.client.room.findUnique( { where: {roomId: roomId } }).created_user()
     }
 }

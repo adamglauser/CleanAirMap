@@ -10,7 +10,7 @@ scalar DateTime
 type Location {
   avgCo2: Float
   created_at: DateTime
-  created_id: Int
+  created_by: User!
   description: String
   district: String
   locality: String
@@ -84,7 +84,7 @@ type Query {
 
 type Room {
   created_at: DateTime
-  created_id: Int
+  created_by: User
   locationId: Int
   name: String
   roomId: Int

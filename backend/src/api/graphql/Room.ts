@@ -7,7 +7,12 @@ export const Room = objectType({
         t.int('roomId'),
         t.int('locationId'),
         t.string('name'),
-        t.int('created_id'),
+        t.field('created_by', {
+            type: 'User',
+            resolve(roomModel, _, ctx) {
+                return ctx.db.roomDAO.getUser(roomModel.roomId)
+            }
+        }),
         t.datetime('created_at')
     },
 })

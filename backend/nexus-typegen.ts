@@ -84,7 +84,7 @@ export interface NexusGenFieldTypes {
   Location: { // field return type
     avgCo2: number | null; // Float
     created_at: NexusGenScalars['DateTime'] | null; // DateTime
-    created_id: number | null; // Int
+    created_by: NexusGenRootTypes['User']; // User!
     description: string | null; // String
     district: string | null; // String
     locality: string | null; // String
@@ -108,7 +108,7 @@ export interface NexusGenFieldTypes {
   }
   Room: { // field return type
     created_at: NexusGenScalars['DateTime'] | null; // DateTime
-    created_id: number | null; // Int
+    created_by: NexusGenRootTypes['User'] | null; // User
     locationId: number | null; // Int
     name: string | null; // String
     roomId: number | null; // Int
@@ -124,7 +124,7 @@ export interface NexusGenFieldTypeNames {
   Location: { // field return type name
     avgCo2: 'Float'
     created_at: 'DateTime'
-    created_id: 'Int'
+    created_by: 'User'
     description: 'String'
     district: 'String'
     locality: 'String'
@@ -148,7 +148,7 @@ export interface NexusGenFieldTypeNames {
   }
   Room: { // field return type name
     created_at: 'DateTime'
-    created_id: 'Int'
+    created_by: 'User'
     locationId: 'Int'
     name: 'String'
     roomId: 'Int'
