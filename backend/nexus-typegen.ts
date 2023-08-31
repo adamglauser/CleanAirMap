@@ -86,6 +86,7 @@ export interface NexusGenFieldTypes {
     created_id: number | null; // Int
     description: string | null; // String
     district: string | null; // String
+    downloadUrl: string | null; // String
     locality: string | null; // String
     locationId: number | null; // Int
     name: string | null; // String
@@ -96,6 +97,7 @@ export interface NexusGenFieldTypes {
     rooms: NexusGenRootTypes['Room'][] | null; // [Room!]
     street: string | null; // String
     type: NexusGenEnums['LocationEnum'] | null; // LocationEnum
+    uploadUrl: string | null; // String
   }
   Mutation: { // field return type
     createLocation: NexusGenRootTypes['Location'] | null; // Location
@@ -121,6 +123,7 @@ export interface NexusGenFieldTypeNames {
     created_id: 'Int'
     description: 'String'
     district: 'String'
+    downloadUrl: 'String'
     locality: 'String'
     locationId: 'Int'
     name: 'String'
@@ -131,6 +134,7 @@ export interface NexusGenFieldTypeNames {
     rooms: 'Room'
     street: 'String'
     type: 'LocationEnum'
+    uploadUrl: 'String'
   }
   Mutation: { // field return type name
     createLocation: 'Location'

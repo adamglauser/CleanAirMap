@@ -2,6 +2,8 @@ import { arg, floatArg, objectType, enumType, inputObjectType } from 'nexus'
 import { extendType } from 'nexus'
 import { stringArg, nonNull, intArg } from 'nexus'
 import { Position } from './GraphQLPosition'
+import { GetSignedUrlConfig } from '@google-cloud/storage'
+const { getDownloadURL } = require('firebase-admin/storage')
 
 export const LocationEnum = enumType({
     name: "LocationEnum",
@@ -61,6 +63,24 @@ export const Location = objectType({
             type: 'Room',
             resolve: (parent, _, ctx) => {
                 return ctx.db.locationDAO.getRooms(parent.locationId);
+            }
+        }),
+        t.field('downloadUrl', {
+            type: 'String',
+            resolve: (parent, _, ctx) => {
+                return getDownloadURL(ctx.photoStorage.bucket('gs://agdev-91234.appspot.com').file(`${parent.locationId}`))
+            }}),
+        t.field('uploadUrl', {
+            type: 'String',
+            resolve: async (parent, _, ctx) => {
+                const options : GetSignedUrlConfig = {
+                    version: 'v4',
+                    action: 'write',
+                    expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+                    contentType: 'image/png',
+                  };
+                const response = await ctx.photoStorage.bucket('gs://agdev-91234.appspot.com').file(`${parent.locationId}`).getSignedUrl(options)
+                return response[0];
             }
         })
         t.int('created_id'),

@@ -13,6 +13,7 @@ type Location {
   created_id: Int
   description: String
   district: String
+  downloadUrl: String
   locality: String
   locationId: Int
   name: String
@@ -23,6 +24,7 @@ type Location {
   rooms: [Room!]
   street: String
   type: LocationEnum
+  uploadUrl: String
 }
 
 """The type of location, eg. shop, place of worship, hospital, etc."""
