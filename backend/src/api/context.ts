@@ -9,17 +9,20 @@ import { GraphQLError } from "graphql";
 import dotenv from 'dotenv'
 
 dotenv.config()
+const adaptor = process.env.USE_LEGACY_ENDPOINT
+    ? new LegacyAdaptor(process.env.USE_LEGACY_ENDPOINT || "")
+    : new PrismaDataAdaptor()
 
 export interface Context {
     db: IDataAdaptor,
     uid: number | null
 }
 
-const auth = new SimpleAuthProvider(process.env);
+const auth = new SimpleAuthProvider(process.env, adaptor.userDAO);
 
 const getAuthorizedUserID = async (req: IncomingMessage): Promise<number> => {
-    const user = auth.getUserId(req.headers.authorization)
-    if (!user) {
+    const user = await auth.getUserId(req.headers.authorization)
+    if (user === undefined || user == null) {
         //TODO: figure out how to make this actually return to client instead of
         //  logging error to console and client request times out
         throw new GraphQLError('You must be logged in to access the API', {
@@ -33,12 +36,7 @@ const getAuthorizedUserID = async (req: IncomingMessage): Promise<number> => {
 }
 
 export const createContext = async ({ req, res }: { req: IncomingMessage, res: OutgoingMessage }) => ({
-    db: new PrismaDataAdaptor(),
+    db: adaptor,
     uid: await getAuthorizedUserID(req)
 })
-
-export const createLegacyContext = async ({ req, res }: { req: IncomingMessage, res: OutgoingMessage }) => ({
-    db: new LegacyAdaptor(process.env.USE_LEGACY_ENDPOINT || ""),
-    uid: await getAuthorizedUserID(req)
-});
 

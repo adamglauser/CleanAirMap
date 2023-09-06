@@ -35,7 +35,21 @@ main().then(
     )
 
 async function createUsers() {
-    for (let created = 0; created < userCount; created++) {
+    let user = await prisma.user.upsert({
+        where: { id: 0 },
+        update: {
+            name: "Default User",
+            email: "cleanair_db_user@example.com",
+            externalAuthType: "SimpleAuthProvider"
+        },
+        create: {
+            id: 0,
+            name: "Default User",
+            email: "cleanair_db_user@example.com",
+            externalAuthType: "SimpleAuthProvider"
+         }
+    });
+    for (let created = 1; created < userCount; created++) {
         let user = await prisma.user.upsert({
             where: { id: created },
             update: {},

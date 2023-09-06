@@ -1,11 +1,13 @@
 import { IAuthProvider, UserModel } from "./IAuthProvider";
+import { IUser } from "../../dataAccess/interfaces";
 
 export  { IAuthProvider, UserModel} from "./IAuthProvider";
 
 export class SimpleAuthProvider implements IAuthProvider {
     alwaysPass : boolean
+    userDAO : IUser
 
-    constructor(env : NodeJS.ProcessEnv) {
+    constructor(env : NodeJS.ProcessEnv, userDAO : IUser) {
         const authMode = env.SIMPLE_AUTH_MODE
         if (authMode != undefined) {
             if (authMode.toLowerCase() === 'pass') {
@@ -21,14 +23,17 @@ export class SimpleAuthProvider implements IAuthProvider {
         else {
             this.alwaysPass = true;
         }
+
+        this.userDAO = userDAO
     }
 
-    getUser(token: String | undefined): UserModel | null {
-        const um : UserModel = { id: 1, name: 'DefaultUser', email: 'default@example.com', externalAuthId: '', externalAuthType: 'SimpleAuthProvider' }
+    async getUser(token: String | undefined): Promise<UserModel | null> {
+        const um : UserModel | null = await this.userDAO.getById(0)
+        console.log(`SimpleAuthProvider: Found user: ${JSON.stringify(um)}`)
         return this.alwaysPass ? um : null;
     }
-    getUserId(token: String | undefined): number | null {
-        const user = this.getUser(token)
+    async getUserId(token: String | undefined): Promise<number | null> {
+        const user = await this.getUser(token)
         return  user === null ? null : user.id
     }
 }

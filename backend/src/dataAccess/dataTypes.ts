@@ -29,8 +29,8 @@ export interface RoomModel {
 
 export interface UserModel {
     id: number,
-    name : String
-    email : String
-    externalAuthId : String
-    externalAuthType : String
+    name : string
+    email : string
+    externalAuthId : string | null
+    externalAuthType : string | null
 }
