@@ -7,6 +7,7 @@ import { SimpleAuthProvider } from "./auth/SimpleAuthProvider";
 import { IncomingMessage, OutgoingMessage } from "http";
 import { GraphQLError } from "graphql";
 import dotenv from 'dotenv'
+import { FirebaseAuthProvider } from "./auth/FirebaseAuthProvider";
 
 dotenv.config()
 const adaptor = process.env.USE_LEGACY_ENDPOINT
@@ -18,7 +19,7 @@ export interface Context {
     uid: number | null
 }
 
-const auth = new SimpleAuthProvider(process.env, adaptor.userDAO);
+const auth = new FirebaseAuthProvider(process.env, adaptor.userDAO);
 
 const getAuthorizedUserID = async (req: IncomingMessage): Promise<number> => {
     const user = await auth.getUserId(req.headers.authorization)

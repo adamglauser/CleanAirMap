@@ -12,6 +12,10 @@ class UserDAO implements IUser {
     getById(id: number): Promise<UserModel | null> {
         return Promise.reject(new Error("Not implemented"));
     }
+
+    getByExternalId(externalId: string): Promise<UserModel | null> {
+        return Promise.reject(new Error("Not implemented"));
+    }
 }
 
 export default UserDAO

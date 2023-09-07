@@ -18,5 +18,5 @@ async function initFirebase() {
 
     user.getIdToken().then((token) => { console.log(`User token: ${token}`)})
 
-    await signOut(auth)
+    //await signOut(auth)
 })();
