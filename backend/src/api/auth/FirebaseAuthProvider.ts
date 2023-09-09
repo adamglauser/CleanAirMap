@@ -5,7 +5,6 @@ import { IUser } from "../../dataAccess/IUser"
 import { UserRecord } from "firebase-admin/lib/auth/user-record"
 
 async function initFirebase(env : NodeJS.ProcessEnv) : Promise<firebaseAdmin.app.App> {
-    console.log("Initializing firebase app")
     const creds = await import(process.env.FIREBASE_CREDS_PATH ?? './firebase_creds.json')
     const app = firebaseAdmin.initializeApp({ credential: firebaseAdmin.credential.cert(creds)})
     return app
@@ -23,8 +22,6 @@ export class FirebaseAuthProvider implements IAuthProvider {
         if (!authHeader) { return null }
 
         const jwt = authHeader.split(" ")[1]
-        console.log(`AuthHeader: ${authHeader}`)
-        console.log(`Extracted token: '${jwt}'`)
         if (!jwt) {
             throw Error("Invalid Authorization header: should be 'Bearer: <your token>'")
         }

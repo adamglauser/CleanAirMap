@@ -5,7 +5,7 @@ import { RoomDAO } from "./RoomDAO";
 import { UserDAO } from "./UserDAO";
 
 const prisma = new PrismaClient({
-    log: ['query', 'info', 'warn', 'error'],
+    log: ['warn', 'error'],
   })
 
 export class PrismaDataAdaptor implements IDataAdaptor {

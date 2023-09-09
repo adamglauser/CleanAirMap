@@ -36,8 +36,18 @@ const getAuthorizedUserID = async (req: IncomingMessage): Promise<number> => {
     return user
 }
 
-export const createContext = async ({ req, res }: { req: IncomingMessage, res: OutgoingMessage }) => ({
-    db: adaptor,
-    uid: await getAuthorizedUserID(req)
-})
+export const createContext = async ({ req, res }: { req: IncomingMessage, res: OutgoingMessage }) => {
+    const timerName = `create_context${Date.now()}`
+    console.time(timerName)
+    try {
+        const context = {
+            db: adaptor,
+            uid: await getAuthorizedUserID(req)
+        }
+        return context
+    }
+    finally {
+        console.timeEnd(timerName)
+    }
+}
 
