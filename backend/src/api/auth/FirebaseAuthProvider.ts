@@ -3,6 +3,7 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier"
 import { IAuthProvider, UserModel } from "./IAuthProvider"
 import { IUser } from "../../dataAccess/IUser"
 import { UserRecord } from "firebase-admin/lib/auth/user-record"
+import { GraphQLError } from "graphql"
 
 async function initFirebase(env : NodeJS.ProcessEnv) : Promise<firebaseAdmin.app.App> {
     const creds = await import(process.env.FIREBASE_CREDS_PATH ?? './firebase_creds.json')
@@ -23,7 +24,7 @@ export class FirebaseAuthProvider implements IAuthProvider {
 
         const jwt = authHeader.split(" ")[1]
         if (!jwt) {
-            throw Error("Invalid Authorization header: should be 'Bearer: <your token>'")
+            throw new GraphQLError("Invalid Authorization header: should be 'Bearer: <your token>'")
         }
 
         let decodedToken : DecodedIdToken | null = null
