@@ -1,7 +1,13 @@
 import { request, gql, GraphQLClient } from 'graphql-request';
 import * as fs from 'node:fs';
-import fetch from 'node-fetch';
-import { setTimeout } from "timers/promises"
+import dotenv from 'dotenv'
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import ReverseGeocoder from './src/ReverseGeocoder.mjs';
+
+const module_dir = dirname(fileURLToPath(import.meta.url));
+dotenv.config({path: `${module_dir}/.env`});
 const graphQLClient = new GraphQLClient('https://gateway.raventalk.org/graphql');
 var locationsFilePath = './locations.json';
 
@@ -26,13 +32,9 @@ var locationsFilePath = './locations.json';
 var v1Locations = JSON.parse(fs.readFileSync(locationsFilePath));
 var aLocation = v1Locations.locations[0];
 console.log("Reverse geocode sample location: %s", JSON.stringify(aLocation));
-var endpoint="https://api.geoapify.com/v1/geocode/reverse"
-var geoapifyKey="keygoeshere";
-var geoaplifyQuery = `${endpoint}?lat=${aLocation.latitude}&lon=${aLocation.longitude}&type=amenity&apiKey=${geoapifyKey}&limit=10`
-console.log("Will fetch from %s", geoaplifyQuery)
+var geocoder=new ReverseGeocoder(process.env);
 
-fetch(geoaplifyQuery)
-.then(response => response.json())
+geocoder.search(aLocation.latitude, aLocation.longitude)
 .then(result => {
   if (result.features.length) {
     console.log(`Found ${result.features.length} features`)
@@ -47,4 +49,5 @@ fetch(geoaplifyQuery)
   } else {
     console.log("No address found");
   }
-});
+})
+.catch(reason => console.log(`search failed due to ${reason}`));
