@@ -3,3 +3,4 @@
 .expo/README.md
 .expo/settings.json
 .vscode/launch.json
+**/.env*
