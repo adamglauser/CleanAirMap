@@ -5,6 +5,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 
 import ReverseGeocoder from './src/ReverseGeocoder.mjs';
 import V1Client from './src/V1Client.mjs'
+import LocationManager from './LocationManager.mjs';
 
 const module_dir = dirname(fileURLToPath(import.meta.url));
 dotenv.config({path: `${module_dir}/.env`});
@@ -16,25 +17,24 @@ if (!existsSync(cachePath)) {
   mkdirSync(cachePath);
 }
 
-var v1Client = new V1Client(process.env);
-var aLocation = (await v1Client.getLocations())[0];
-console.log("Reverse geocode sample location: %s", JSON.stringify(aLocation));
-var geocoder=new ReverseGeocoder(process.env);
+var locMgr = new LocationManager(process.env, new V1Client(process.env), new ReverseGeocoder(process.env));
+await locMgr.loadLocations();
+var locationDetail = await locMgr.searchLocationIndex(0);
 
-geocoder.search(aLocation.latitude, aLocation.longitude)
-.then(result => {
+var result = locationDetail.searchResult;
   if (result.features.length) {
     console.log(`Found ${result.features.length} features`)
     result.features.forEach(found =>{
+      var rankString = JSON.stringify(found.properties.rank);
       console.log("---")
       console.log(
-        `Name: ${found.properties.formatted}
-        Addr: ${found.properties.formatted}
-        Type: ${found.properties.result_type}
-        Cat : ${found.properties.category}`);
+`    Name: ${found.properties.name}
+    Addr: ${found.properties.formatted}
+    Dist: ${found.properties.distance}
+    Rank: ${rankString}
+    Type: ${found.properties.result_type}
+    Cat : ${found.properties.category}`);
     })
   } else {
     console.log("No address found");
   }
-})
-.catch(reason => console.log(`search failed due to ${reason}`));
