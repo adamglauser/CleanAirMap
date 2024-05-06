@@ -5,7 +5,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 
 import ReverseGeocoder from './src/ReverseGeocoder.mjs';
 import V1Client from './src/V1Client.mjs'
-import LocationManager from './LocationManager.mjs';
+import LocationManager from './src/LocationManager.mjs';
 
 const module_dir = dirname(fileURLToPath(import.meta.url));
 dotenv.config({path: `${module_dir}/.env`});
