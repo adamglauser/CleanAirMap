@@ -19,22 +19,28 @@ if (!existsSync(cachePath)) {
 
 var locMgr = new LocationManager(process.env, new V1Client(process.env), new ReverseGeocoder(process.env));
 await locMgr.loadLocations();
-var locationDetail = await locMgr.searchLocationIndex(0);
+locMgr.loadCachedSearchResults();
+console.log("Loaded cached search results");
 
-var result = locationDetail.searchResult;
-  if (result.features.length) {
-    console.log(`Found ${result.features.length} features`)
-    result.features.forEach(found =>{
-      var rankString = JSON.stringify(found.properties.rank);
-      console.log("---")
-      console.log(
-`    Name: ${found.properties.name}
-    Addr: ${found.properties.formatted}
-    Dist: ${found.properties.distance}
-    Rank: ${rankString}
-    Type: ${found.properties.result_type}
-    Cat : ${found.properties.category}`);
-    })
-  } else {
-    console.log("No address found");
-  }
+//locMgr.searchAll();
+
+// await locMgr.loadLocations();
+// var locationDetail = await locMgr.searchLocationIndex(0);
+
+// var result = locationDetail.searchResult;
+//   if (result.features.length) {
+//     console.log(`Found ${result.features.length} features`)
+//     result.features.forEach(found =>{
+//       var rankString = JSON.stringify(found.properties.rank);
+//       console.log("---")
+//       console.log(
+// `    Name: ${found.properties.name}
+//     Addr: ${found.properties.formatted}
+//     Dist: ${found.properties.distance}
+//     Rank: ${rankString}
+//     Type: ${found.properties.result_type}
+//     Cat : ${found.properties.category}`);
+//     })
+//   } else {
+//     console.log("No address found");
+//   }
