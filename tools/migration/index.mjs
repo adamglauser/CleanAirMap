@@ -22,6 +22,11 @@ await locMgr.loadLocations();
 locMgr.loadCachedSearchResults();
 console.log("Loaded cached search results");
 
+//await locMgr.searchAll();
+
+locMgr.processSearchResults();
+locMgr.summarizeMatchResults();
+
 //locMgr.searchAll();
 
 // await locMgr.loadLocations();
