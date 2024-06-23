@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import MatchProcessor from './MatchProcessor.mjs';
 
 export default class LocationManager {
     constructor(context, v1Client,reverseGeocoder) {
@@ -85,9 +86,60 @@ export default class LocationManager {
             .forEach((id) => {
                 var location = this.locationDetails[id].location;
                 var cachedResult =this.getSearchFromCache(location)
-                location.searchResult = cachedResult;
+                this.locationDetails[id].searchResult = cachedResult;
                 //console.log(`Loaded cached search for location ${id}: ${cachedResult.features.length} features`)
             });
+    }
+
+    processSearchResultID(locationID) {
+        var summary = this.processSearchResult(this.locationDetails[locationID].location, this.locationDetails[locationID].searchResult);
+        this.locationDetails[locationID].matchSummary = summary;
+    }
+
+    processSearchResult(location, searchResults) {
+        var matchSummary = MatchProcessor.processReverseResults(location, searchResults);
+        return matchSummary;
+    }
+
+    processSearchResults() {
+        var locationIDs = Object.keys(this.locationDetails);
+        locationIDs.filter((id) => this.locationDetails[id].searchResult != undefined)
+            .forEach((id) => {
+                var location = this.locationDetails[id].location;
+                var searchResults = this.locationDetails[id].searchResult;
+                this.locationDetails[id].matchSummary = this.processSearchResult(location, searchResults);
+            })
+    }
+
+    summarizeMatchResults() {
+        var locationIDs = Object.keys(this.locationDetails);
+        var matched = locationIDs.filter((id) => this.locationDetails[id].matchSummary != undefined);
+        var fullNameMatchCount = 0;
+        var partNameMatchCount = 0;
+        var addrMatchCount = 0;
+        var bothCount = 0
+        var multipleMatch = 0;
+        var noMatchFound = 0;
+        console.log("summarizing %d locations", matched.length);
+        matched.forEach((id => {
+            var summary = this.locationDetails[id].matchSummary;
+            var hasNameMatch = summary.nameMatch.count > 0;
+            var hasPartMatch = summary.partNameMatch.count > 0;
+            var hasAddrMatch = summary.addrMatch.count > 0;
+            fullNameMatchCount += hasNameMatch ? 1 : 0;
+            partNameMatchCount += hasPartMatch ? 1 : 0;
+            addrMatchCount += hasAddrMatch > 0 ? 1 : 0;
+            bothCount += (hasNameMatch || hasPartMatch > 0) && hasAddrMatch > 0 ? 1 : 0;
+            multipleMatch += (summary.nameMatch.count > 1 || summary.partNameMatch >1 || summary.addrMatch.count > 1) ? 1: 0;
+            noMatchFound += (!hasNameMatch && !hasPartMatch && !hasAddrMatch);
+        }));
+
+        console.log("Full name matches: %d", fullNameMatchCount);
+        console.log("Part name matches: %d", partNameMatchCount);
+        console.log("  Address matches: %d", addrMatchCount);
+        console.log(" Both match types: %d", bothCount);
+        console.log(" Multiple matches: %d", multipleMatch);
+        console.log("   No match found: %d", noMatchFound);
     }
 
     getSearchCachePath(location) {
@@ -104,5 +156,19 @@ export default class LocationManager {
 
     writeSearchCache(location, result) {
         fs.writeFileSync(this.getSearchCachePath(location), JSON.stringify(result));
+    }
+
+    getDetail(id) {
+        return this.locationDetails[id];
+    }
+
+    showSummary(locationDetail) {
+        var location = locationDetail.location;
+        console.log("Location: %s, %d:%d, %s\n          %s\n", location.id, location.latitude, location.longitude, location.name);
+        console.log("-----");
+        console.log("Potential match count: %d", locationDetail.searchResult.features.length);
+        console.log("-----");
+        var matchSummary = locationDetail.matchSummary;
+        console.log("Match summary:\n    Name match: %d\n    Part. name: %d\n    Addr match: %d", matchSummary.nameMatch.count, matchSummary.partNameMatch.count, matchSummary.addrMatch.count);
     }
 }
