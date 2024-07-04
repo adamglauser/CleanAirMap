@@ -2,9 +2,9 @@ import * as fs from 'node:fs';
 import MatchProcessor from './MatchProcessor.mjs';
 
 export default class LocationManager {
-    constructor(context, v1Client,reverseGeocoder) {
+    constructor(context, v1Client,searcher) {
         this.v1Client = v1Client;
-        this.reverseGeocoder = reverseGeocoder;
+        this.searchClient = searcher;
         this.locationDetails = {};
         this.cacheRoot = `${context.APP_ROOT_PATH}\\${context.APP_CACHE_DIR}`;
     }
@@ -44,16 +44,17 @@ export default class LocationManager {
     async searchLocation(location) {
         await this.enforceLoaded();
         var cachedResult = null;
-        if (this.searchCacheExists(location)) {
+        var cacheKey = this.searchClient.getCacheKey();
+        if (this.searchCacheExists(location, cacheKey)) {
             console.log(`Loading search results for location ${location.id} from cache`);
-            cachedResult = this.getSearchFromCache(location);
+            cachedResult = this.getSearchFromCache(location, cacheKey);
         }
         if (cachedResult === null) {
             console.log(`Retrieving search results for location ${location.id} from endpoint`);
-            await (this.reverseGeocoder.search(location.latitude, location.longitude, process.env.GEOAPIFY_REVERSE_LIMIT)
+            await (this.searchClient.search(location, process.env.GEOAPIFY_REVERSE_LIMIT)
                 .then(result => {
                     if (result != null) {
-                        this.writeSearchCache(location, result);
+                        this.writeSearchCache(location, cacheKey, result);
                         cachedResult = result;
                     }
                 })
@@ -68,7 +69,7 @@ export default class LocationManager {
     async searchAll() {
         await this.enforceLoaded();
         var searchedCount = 0;
-        var searchCount = this.reverseGeocoder.getRemainingCalls();
+        var searchCount = this.searchClient.getRemainingCalls();
         var locationIDs = Object.keys(this.locationDetails);
 
         var toSearch = locationIDs.filter((id) => this.locationDetails[id].searchResult === undefined);
@@ -82,10 +83,11 @@ export default class LocationManager {
 
     loadCachedSearchResults() {
         var locationIDs = Object.keys(this.locationDetails);
-        locationIDs.filter((id) => this.searchCacheExists(this.locationDetails[id].location))
+        var cacheKey = this.searchClient.getCacheKey();
+        locationIDs.filter((id) => this.searchCacheExists(this.locationDetails[id].location, cacheKey))
             .forEach((id) => {
                 var location = this.locationDetails[id].location;
-                var cachedResult =this.getSearchFromCache(location)
+                var cachedResult =this.getSearchFromCache(location, cacheKey)
                 this.locationDetails[id].searchResult = cachedResult;
                 //console.log(`Loaded cached search for location ${id}: ${cachedResult.features.length} features`)
             });
@@ -142,20 +144,20 @@ export default class LocationManager {
         console.log("   No match found: %d", noMatchFound);
     }
 
-    getSearchCachePath(location) {
-        return `${this.cacheRoot}\\${location.id}_SEARCH_RESULTS`;
+    getSearchCachePath(location, cacheKey) {
+        return `${this.cacheRoot}\\${cacheKey}\\${location.id}_SEARCH_RESULTS`;
     }
 
-    searchCacheExists(location) {
-        return fs.existsSync(this.getSearchCachePath(location));
+    searchCacheExists(location, cacheKey) {
+        return fs.existsSync(this.getSearchCachePath(location, cacheKey));
     }
 
-    getSearchFromCache(location) {
-        return JSON.parse(fs.readFileSync(this.getSearchCachePath(location)))
+    getSearchFromCache(location, cacheKey) {
+        return JSON.parse(fs.readFileSync(this.getSearchCachePath(location, cacheKey)))
     }
 
-    writeSearchCache(location, result) {
-        fs.writeFileSync(this.getSearchCachePath(location), JSON.stringify(result));
+    writeSearchCache(location, cacheKey, result) {
+        fs.writeFileSync(this.getSearchCachePath(location, cacheKey), JSON.stringify(result));
     }
 
     getDetail(id) {
