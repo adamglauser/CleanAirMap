@@ -4,19 +4,20 @@ export default class ReverseGeocoder {
     constructor(context) {
         this.endpoint = context.GEOAPIFY_REVERSE_ENDPOINT;
         this.geoapifyKey = context.GEOAPIFY_API_KEY;
-        this.callLimit = context.GEOAPIFY_CALL_LIMIT;
+        this.callLimit = parseInt(context.GEOAPIFY_CALL_LIMIT);
         this.callCount = 0;
+        this.cacheKey = 'reverse'
     }
 
     buildQuery(lat, lon, limit) {
         return `${this.endpoint}?lat=${lat}&lon=${lon}&type=amenity&apiKey=${this.geoapifyKey}&limit=${limit}`;
     }
 
-    search(lat, lon, limit = 10) {
-        var query = this.buildQuery(lat, lon, limit);
+    search(location, limit = 10) {
+        var query = this.buildQuery(location.latitude, location.longitude, limit);
 
         if (this.callCount < this.callLimit) {
-            this.callLimit += 1;
+            this.callCount += 1;
             return fetch(query).then(response => response.json()).catch(response => new Promise.reject(() => null));
         }
         else {
@@ -31,6 +32,10 @@ export default class ReverseGeocoder {
 
     getRemainingCalls() {
         return this.callLimit - this.callCount;
+    }
+
+    getCacheKey() {
+        return this.cacheKey;
     }
 }
 
