@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { existsSync, mkdirSync } from 'node:fs';
 
 import ReverseGeocoder from './src/ReverseGeocoder.mjs';
+import AutoCompleter from './src/AutoCompleter.mjs';
 import V1Client from './src/V1Client.mjs'
 import LocationManager from './src/LocationManager.mjs';
 
@@ -17,12 +18,13 @@ if (!existsSync(cachePath)) {
   mkdirSync(cachePath);
 }
 
-var locMgr = new LocationManager(process.env, new V1Client(process.env), new ReverseGeocoder(process.env));
+var searcher = new AutoCompleter(process.env);
+var locMgr = new LocationManager(process.env, new V1Client(process.env), searcher);
 await locMgr.loadLocations();
 locMgr.loadCachedSearchResults();
 console.log("Loaded cached search results");
 
-//await locMgr.searchAll();
+await locMgr.searchAll();
 
 locMgr.processSearchResults();
 locMgr.summarizeMatchResults();
