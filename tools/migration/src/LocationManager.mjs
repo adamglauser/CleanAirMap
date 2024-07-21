@@ -7,6 +7,7 @@ export default class LocationManager {
         this.searchClient = searcher;
         this.locationDetails = {};
         this.cacheRoot = `${context.APP_ROOT_PATH}\\${context.APP_CACHE_DIR}`;
+        this.totalSearchedLocations = 0;
     }
 
     async enforceLoaded() {
@@ -61,7 +62,7 @@ export default class LocationManager {
                 .catch(() => cachedResult = null));
         }
         if (cachedResult != null) {
-            this.locationDetails[location.id].searchResult = cachedResult;
+            this.setSearchResult(location.id, cachedResult);
         }
         return cachedResult != null;
     }
@@ -81,6 +82,11 @@ export default class LocationManager {
         });
     }
 
+    setSearchResult(id, result) {
+        this.locationDetails[id].searchResult = result;
+        this.totalSearchedLocations += 1;
+    }
+
     loadCachedSearchResults() {
         var locationIDs = Object.keys(this.locationDetails);
         var cacheKey = this.searchClient.getCacheKey();
@@ -88,7 +94,7 @@ export default class LocationManager {
             .forEach((id) => {
                 var location = this.locationDetails[id].location;
                 var cachedResult =this.getSearchFromCache(location, cacheKey)
-                this.locationDetails[id].searchResult = cachedResult;
+                this.setSearchResult(id, cachedResult);
                 //console.log(`Loaded cached search for location ${id}: ${cachedResult.features.length} features`)
             });
     }
