@@ -11,7 +11,7 @@ import LocationManager from './src/LocationManager.mjs'
 import V1Client from './src/V1Client.mjs'
 import CLIView from './src/cliView.mjs'
 
-var cliContext = { "searcher": "", verbose: false };
+var cliContext = { "locMgr":"", "searcher": "", verbose: false };
 
 program
     .version("0.0.1")
@@ -29,16 +29,16 @@ program
 
         cliContext.locMgr = new LocationManager(process.env, new V1Client(process.env), cliContext.searcher);
         view.writeMessage(`Loading locations...`, cliContext, "DEBUG");
-        locMgr.loadLocations().then(() => {
+        cliContext.locMgr.loadLocations().then(() => {
             view.writeMessage(`Loading cached search results ...`, cliContext,"DEBUG");
-            locMgr.loadCachedSearchResults()
+            cliContext.locMgr.loadCachedSearchResults()
             view.writeMessage("Loaded cached search results!", cliContext,"DEBUG");
         });
         
-        // //await locMgr.searchAll();
+        // //await cliContext.locMgr.searchAll();
         
-        // locMgr.processSearchResults();
-        // locMgr.summarizeMatchResults();
+        // cliContext.locMgr.processSearchResults();
+        // cliContext.locMgr.summarizeMatchResults();
     });
 
 program.parse(process.argv);
@@ -57,4 +57,5 @@ function processOptions(cliContext, options) {
     else {
         cliContext.searcher = new AutoCompleter(process.env);
     }
+    view.writeMessage(`Using searcher "${cliContext.searcher.cacheKey}"`, cliContext, "DEBUG");
 }
