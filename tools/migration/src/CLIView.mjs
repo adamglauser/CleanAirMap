@@ -29,12 +29,12 @@ export default class CLIView {
     }
 
     async promptForAction() {
-        const questions = [{
+        const nextAction = [{
             type: 'input',
             name: 'choice',
             message: 'Please select an option: 1 - LoadLocations, 2 - exit',
         },]
-        return inquirer.prompt(questions).then(response => {
+        return inquirer.prompt(nextAction).then(response => {
             if (response.choice == '1') {
                 return "LoadLocations";
             }
