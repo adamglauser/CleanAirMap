@@ -10,6 +10,16 @@ export default class LocationManager {
         this.totalSearchedLocations = 0;
     }
 
+    getLocationCount() {
+        if (this.locationDetails === undefined) { return 0 };
+
+        return Object.keys(this.locationDetails).length;
+    }
+
+    getSearchedCount() {
+        return this.totalSearchedLocations;
+    }
+
     async enforceLoaded() {
         if (this.locationDetails === undefined || Object.keys(this.locationDetails).length == 0) {
             await this.loadLocations();
