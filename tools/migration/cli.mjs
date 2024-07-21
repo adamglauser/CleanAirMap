@@ -10,33 +10,27 @@ import AutoCompleter from './src/AutoCompleter.mjs';
 import LocationManager from './src/LocationManager.mjs'
 import V1Client from './src/V1Client.mjs'
 
+var cliContext = { "searcher": "", verbose: false };
+
 program
     .version("0.0.1")
     .description("Migration Tool CLI")
     .option("-s, --searcher <type>", "The searcher")
+    .option("-v, --verbose", "Show verbose output")
     .action((options) => {
+        
         const module_dir = dirname(fileURLToPath(import.meta.url));
         process.env.APP_ROOT_PATH=module_dir;
         dotenv.config({path: `${module_dir}/.env`});
 
-        var searcher;
-        if (options.searcher == 'AutoCompleter') {
-            searcher = new AutoCompleter(process.env);
-        }
-        else if (options.searcher == 'ReverseGeocoder') {
-            searcher = new ReverseGeocoder(process.env);
-        }
-        else {
-            searcher = new AutoCompleter(process.env);
-        }
-
-        console.log(`Using searcher "${searcher.cacheKey}"`)
-        var locMgr = new LocationManager(process.env, new V1Client(process.env), searcher);
-        console.log(`Loading locations...`);
+        processOptions(cliContext, options);
+        writeMessage(`Using searcher "${cliContext.searcher.cacheKey}"`, "DEBUG");
+        var locMgr = new LocationManager(process.env, new V1Client(process.env), cliContext.searcher);
+        writeMessage(`Loading locations...`, "DEBUG");
         locMgr.loadLocations().then(() => {
-            console.log(`Loading cached search results ...`);
+            writeMessage(`Loading cached search results ...`,"DEBUG");
             locMgr.loadCachedSearchResults()
-            console.log("Loaded cached search results!");
+            writeMessage("Loaded cached search results!","DEBUG");
         });
         
         // //await locMgr.searchAll();
@@ -46,3 +40,26 @@ program
     });
 
 program.parse(process.argv);
+
+function writeMessage(message, level = "INFO") {
+    if (level == "DEBUG" && !cliContext.verbose) {
+        return;
+    }
+    console.log(message);
+}
+
+function processOptions(cliContext, options) {
+    if (options.verbose != undefined) {
+        cliContext.verbose = true;
+    }
+
+    if (options.searcher == 'AutoCompleter') {
+        cliContext.searcher = new AutoCompleter(process.env);
+    }
+    else if (options.searcher == 'ReverseGeocoder') {
+        cliContext.searcher = new ReverseGeocoder(process.env);
+    }
+    else {
+        cliContext.searcher = new AutoCompleter(process.env);
+    }
+}
