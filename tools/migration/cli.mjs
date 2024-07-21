@@ -28,13 +28,15 @@ program
         view.writeMessage(`Using searcher "${cliContext.searcher.cacheKey}"`, cliContext, "DEBUG");
 
         cliContext.locMgr = new LocationManager(process.env, new V1Client(process.env), cliContext.searcher);
+
+        view.showStatus(cliContext);
         view.writeMessage(`Loading locations...`, cliContext, "DEBUG");
         cliContext.locMgr.loadLocations().then(() => {
             view.writeMessage(`Loading cached search results ...`, cliContext,"DEBUG");
             cliContext.locMgr.loadCachedSearchResults()
             view.writeMessage("Loaded cached search results!", cliContext,"DEBUG");
+            view.showStatus(cliContext);
         });
-        
         // //await cliContext.locMgr.searchAll();
         
         // cliContext.locMgr.processSearchResults();
@@ -57,5 +59,4 @@ function processOptions(cliContext, options) {
     else {
         cliContext.searcher = new AutoCompleter(process.env);
     }
-    view.writeMessage(`Using searcher "${cliContext.searcher.cacheKey}"`, cliContext, "DEBUG");
 }
