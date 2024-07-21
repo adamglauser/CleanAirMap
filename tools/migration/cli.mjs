@@ -29,14 +29,14 @@ program
 
         cliContext.locMgr = new LocationManager(process.env, new V1Client(process.env), cliContext.searcher);
 
-        view.showStatus(cliContext);
-        view.writeMessage(`Loading locations...`, cliContext, "DEBUG");
-        cliContext.locMgr.loadLocations().then(() => {
-            view.writeMessage(`Loading cached search results ...`, cliContext,"DEBUG");
-            cliContext.locMgr.loadCachedSearchResults()
-            view.writeMessage("Loaded cached search results!", cliContext,"DEBUG");
-            view.showStatus(cliContext);
-        });
+        view.showWelcome();
+        processAction(view, cliContext);
+        // cliContext.locMgr.loadLocations().then(() => {
+        //     view.writeMessage(`Loading cached search results ...`, cliContext,"DEBUG");
+        //     cliContext.locMgr.loadCachedSearchResults()
+        //     view.writeMessage("Loaded cached search results!", cliContext,"DEBUG");
+        //     view.showStatus(cliContext);
+        // });
         // //await cliContext.locMgr.searchAll();
         
         // cliContext.locMgr.processSearchResults();
@@ -44,6 +44,18 @@ program
     });
 
 program.parse(process.argv);
+
+function processAction(view, cliContext) {
+    view.showStatus(cliContext);
+    view.promptForAction().then((action) => {
+        if (action == "LoadLocations") {
+            cliContext.locMgr.loadLocations().then(() => { processAction(view, cliContext) });
+        }
+        else {
+            view.showThanks();
+        }
+    });
+}
 
 function processOptions(cliContext, options) {
     if (options.verbose != undefined) {

@@ -1,3 +1,5 @@
+import inquirer from "inquirer";
+
 export default class CLIView {
     
     writeMessage(message, cliContext, level = "INFO") {
@@ -17,4 +19,29 @@ export default class CLIView {
         const maxLocationDigits = 5;
         return number.toString().padStart(maxLocationDigits, " ");
     }
+
+    showWelcome() {
+        this.writeMessage("Welcome to the CleanAir Migrator");
+    }
+    
+    showThanks() {
+        this.writeMessage("Thanks, bye!");
+    }
+
+    async promptForAction() {
+        const questions = [{
+            type: 'input',
+            name: 'choice',
+            message: 'Please select an option: 1 - LoadLocations, 2 - exit',
+        },]
+        return inquirer.prompt(questions).then(response => {
+            if (response.choice == '1') {
+                return "LoadLocations";
+            }
+            else {
+                return "Exit";
+            }
+        });
+    }
+
 }
