@@ -97,7 +97,7 @@ export default class LocationManager {
         this.totalSearchedLocations += 1;
     }
 
-    loadCachedSearchResults() {
+    async loadCachedSearchResults() {
         var locationIDs = Object.keys(this.locationDetails);
         var cacheKey = this.searchClient.getCacheKey();
         locationIDs.filter((id) => this.searchCacheExists(this.locationDetails[id].location, cacheKey))

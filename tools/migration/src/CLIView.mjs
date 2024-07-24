@@ -32,11 +32,17 @@ export default class CLIView {
         const nextAction = [{
             type: 'input',
             name: 'choice',
-            message: 'Please select an option: 1 - LoadLocations, 2 - exit',
+            message: 'Please select an option: 1 - LoadLocations, 2 - Load Cached Search results, 3 - Run a search, 4+ - Exit ',
         },]
         return inquirer.prompt(nextAction).then(response => {
             if (response.choice == '1') {
                 return "LoadLocations";
+            }
+            else if (response.choice == '2') {
+                return "LoadResultCache"
+            }
+            else if (response.choice == '3') {
+                return "RunSearch"
             }
             else {
                 return "Exit";

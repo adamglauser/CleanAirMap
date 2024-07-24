@@ -51,6 +51,12 @@ function processAction(view, cliContext) {
         if (action == "LoadLocations") {
             cliContext.locMgr.loadLocations().then(() => { processAction(view, cliContext) });
         }
+        else if (action == "LoadResultCache") {
+            cliContext.locMgr.loadCachedSearchResults().then(() => { processAction(view, cliContext) });
+        }
+        else if (action == "RunSearch") {
+            cliContext.locMgr.searchAll().then(() => { processAction(view, cliContext) });
+        }
         else {
             view.showThanks();
         }
