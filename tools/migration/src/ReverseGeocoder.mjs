@@ -18,12 +18,12 @@ export default class ReverseGeocoder {
 
         if (this.callCount < this.callLimit) {
             this.callCount += 1;
-            return fetch(query).then(response => response.json()).catch(response => new Promise.reject(() => null));
+            return fetch(query).then(response => response.json()).catch(response => Promise.reject(() => null));
         }
         else {
             console.log("Search aborted: geoapify call limit reached")
         }
-        return null;
+        return Promise.reject(() => null);
     }
 
     callLimitReached() {
