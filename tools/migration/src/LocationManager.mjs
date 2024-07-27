@@ -7,7 +7,8 @@ export default class LocationManager {
         this.searchClient = searcher;
         this.locationDetails = {};
         this.cacheRoot = `${context.APP_ROOT_PATH}\\${context.APP_CACHE_DIR}`;
-        this.totalSearchedLocations = 0;
+        this.totalSearchedLocations = {};
+        this.totalSearchedLocations[this.searchClient.getCacheKey()] = 0;
     }
 
     getLocationCount() {
@@ -16,8 +17,11 @@ export default class LocationManager {
         return Object.keys(this.locationDetails).length;
     }
 
-    getSearchedCount() {
-        return this.totalSearchedLocations;
+    getSearchedCount(cacheKey = this.searchClient.getCacheKey()) {
+        if (this.totalSearchedLocations[cacheKey] === undefined) {
+            this.totalSearchedLocations[cacheKey] = 0;
+        }
+        return this.totalSearchedLocations[cacheKey];
     }
 
     async enforceLoaded() {
@@ -72,7 +76,7 @@ export default class LocationManager {
                 .catch(() => cachedResult = null));
         }
         if (cachedResult != null) {
-            this.setSearchResult(location.id, cachedResult);
+            this.setSearchResult(location.id, cacheKey, cachedResult);
         }
         return cachedResult != null;
     }
@@ -92,25 +96,34 @@ export default class LocationManager {
         });
     }
 
-    setSearchResult(id, result) {
-        this.locationDetails[id].searchResult = result;
-        this.totalSearchedLocations += 1;
+    setSearchResult(id, cacheKey, result) {
+        if (this.locationDetails[id].searchResult === undefined) {
+            this.locationDetails[id].searchResult = {};
+        }
+        this.locationDetails[id].searchResult[cacheKey] = result;
+        this.updateSearchCount(cacheKey);
     }
 
-    async loadCachedSearchResults() {
+    updateSearchCount(cacheKey, increment = 1) {
+        if (this.totalSearchedLocations[cacheKey] === undefined) {
+            this.totalSearchedLocations[cacheKey] = 0;
+        }
+        this.totalSearchedLocations[cacheKey] += increment;
+    }
+
+    async loadCachedSearchResults(cacheKey = this.searchClient.getCacheKey()) {
         var locationIDs = Object.keys(this.locationDetails);
-        var cacheKey = this.searchClient.getCacheKey();
         locationIDs.filter((id) => this.searchCacheExists(this.locationDetails[id].location, cacheKey))
             .forEach((id) => {
                 var location = this.locationDetails[id].location;
                 var cachedResult =this.getSearchFromCache(location, cacheKey)
-                this.setSearchResult(id, cachedResult);
+                this.setSearchResult(id, cacheKey, cachedResult);
                 //console.log(`Loaded cached search for location ${id}: ${cachedResult.features.length} features`)
             });
     }
 
-    processSearchResultID(locationID) {
-        var summary = this.processSearchResult(this.locationDetails[locationID].location, this.locationDetails[locationID].searchResult);
+    processSearchResultID(locationID, cacheKey = this.searchClient.getCacheKey()) {
+        var summary = this.processSearchResult(this.locationDetails[locationID].location, this.locationDetails[locationID].searchResult[cacheKey]);
         this.locationDetails[locationID].matchSummary = summary;
     }
 
@@ -119,12 +132,12 @@ export default class LocationManager {
         return matchSummary;
     }
 
-    processSearchResults() {
+    processSearchResults(cacheKey= this.searchClient.getCacheKey()) {
         var locationIDs = Object.keys(this.locationDetails);
-        locationIDs.filter((id) => this.locationDetails[id].searchResult != undefined)
+        locationIDs.filter((id) => this.locationDetails[id].searchResult[cacheKey] != undefined)
             .forEach((id) => {
                 var location = this.locationDetails[id].location;
-                var searchResults = this.locationDetails[id].searchResult;
+                var searchResults = this.locationDetails[id].searchResult[cacheKey];
                 this.locationDetails[id].matchSummary = this.processSearchResult(location, searchResults);
             })
     }
