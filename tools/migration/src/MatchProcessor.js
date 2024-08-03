@@ -1,4 +1,4 @@
-export default class MatchProcessor {
+class MatchProcessor {
     static processReverseResults(location, resultSet) {
         var resultSummary = { nameMatch: {count: 0, matchList: []}, partNameMatch: { count: 0, matchList: []}, addrMatch: {count: 0, matchList: []}};
 
@@ -54,3 +54,5 @@ export default class MatchProcessor {
         }
     }
 }
+
+module.exports = MatchProcessor;

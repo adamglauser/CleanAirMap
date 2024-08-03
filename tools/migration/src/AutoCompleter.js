@@ -1,6 +1,6 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch-commonjs');
 
-export default class AutoCompleter {
+class AutoCompleter {
     constructor(context) {
         this.endpoint = context.GEOAPIFY_AUTOCOMPLETE_ENDPOINT;
         this.geoapifyKey = context.GEOAPIFY_API_KEY;
@@ -40,4 +40,6 @@ export default class AutoCompleter {
         return this.cacheKey;
     }
 }
+
+module.exports = AutoCompleter;
 

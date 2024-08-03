@@ -1,7 +1,7 @@
-import * as fs from 'node:fs';
-import MatchProcessor from './MatchProcessor.mjs';
+const fs = require('fs');
+const MatchProcessor = require('./MatchProcessor');
 
-export default class LocationManager {
+class LocationManager {
     constructor(context, v1Client,searcher) {
         this.v1Client = v1Client;
         this.searchClient = searcher;
@@ -203,3 +203,5 @@ export default class LocationManager {
         console.log("Match summary:\n    Name match: %d\n    Part. name: %d\n    Addr match: %d", matchSummary.nameMatch.count, matchSummary.partNameMatch.count, matchSummary.addrMatch.count);
     }
 }
+
+module.exports = LocationManager;

@@ -1,6 +1,6 @@
-import inquirer from "inquirer";
+const inquirer = require('inquirer').default;
 
-export default class CLIView {
+class CLIView {
     
     writeMessage(message, cliContext, level = "INFO") {
         if (level == "DEBUG" && !cliContext.verbose) {
@@ -49,5 +49,6 @@ export default class CLIView {
             }
         });
     }
-
 }
+
+module.exports = CLIView;

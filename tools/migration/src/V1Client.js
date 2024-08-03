@@ -1,7 +1,7 @@
-import { request, gql, GraphQLClient } from 'graphql-request';
-import * as fs from 'node:fs';
+const { request, gql, GraphQLClient } = require('graphql-request');
+const fs = require('fs');
 
-export default class V1Client {
+class V1Client {
     constructor(context) {
         this.graphQLClient = new GraphQLClient(context.V1_CLIENT_ENDPOINT);
         this.cachePath = `${context.APP_ROOT_PATH}\\${context.APP_CACHE_DIR}\\${context.V1_LOCATIONS_CACHE}`;
@@ -43,3 +43,5 @@ export default class V1Client {
         return v1Locations.locations;
     }
 }
+
+module.exports = V1Client;

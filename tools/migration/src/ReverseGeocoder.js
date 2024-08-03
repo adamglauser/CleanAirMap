@@ -1,6 +1,6 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch-commonjs');
 
-export default class ReverseGeocoder {
+class ReverseGeocoder {
     constructor(context) {
         this.endpoint = context.GEOAPIFY_REVERSE_ENDPOINT;
         this.geoapifyKey = context.GEOAPIFY_API_KEY;
@@ -39,3 +39,4 @@ export default class ReverseGeocoder {
     }
 }
 
+module.exports = ReverseGeocoder;

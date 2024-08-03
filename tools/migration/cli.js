@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 
-import { program } from "commander";
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import dotenv from 'dotenv'
+const { program } = require("commander");
+const dotenv = require('dotenv');
 
-import ReverseGeocoder from './src/ReverseGeocoder.mjs';
-import AutoCompleter from './src/AutoCompleter.mjs';
-import LocationManager from './src/LocationManager.mjs'
-import V1Client from './src/V1Client.mjs'
-import CLIView from './src/cliView.mjs'
+const ReverseGeocoder = require('./src/ReverseGeocoder.js');
+const AutoCompleter = require('./src/AutoCompleter.js');
+const LocationManager = require('./src/LocationManager.js');
+const V1Client = require('./src/V1Client.js');
+const CLIView = require('./src/cliView.js');
 
 var cliContext = { "locMgr":"", "searcher": "", verbose: false };
 
@@ -20,7 +18,7 @@ program
     .option("-v, --verbose", "Show verbose output")
     .action((options) => {
         const view  = new CLIView();
-        const module_dir = dirname(fileURLToPath(import.meta.url));
+        const module_dir = __dirname;
         process.env.APP_ROOT_PATH=module_dir;
         dotenv.config({path: `${module_dir}/.env`});
 
