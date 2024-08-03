@@ -12,7 +12,8 @@ class CLIView {
     showStatus(cliContext) {
         var locationCount = this.formatLocationCount(cliContext.locMgr.getLocationCount());
         var searchCount = this.formatLocationCount(cliContext.locMgr.getSearchedCount());
-        this.writeMessage(`Locations: ${locationCount} | Searched: ${searchCount}`);
+        var currentSearcher = cliContext.locMgr.searchClient.getCacheKey();
+        this.writeMessage(`Locations: ${locationCount} | Searched: ${searchCount} | Searcher: ${currentSearcher}`);
     }
 
     formatLocationCount(number) {
