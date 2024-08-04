@@ -36,16 +36,6 @@ program
 
         view.showWelcome();
         processAction(view, cliContext);
-        // cliContext.locMgr.loadLocations().then(() => {
-        //     view.writeMessage(`Loading cached search results ...`, cliContext,"DEBUG");
-        //     cliContext.locMgr.loadCachedSearchResults()
-        //     view.writeMessage("Loaded cached search results!", cliContext,"DEBUG");
-        //     view.showStatus(cliContext);
-        // });
-        // //await cliContext.locMgr.searchAll();
-        
-        // cliContext.locMgr.processSearchResults();
-        // cliContext.locMgr.summarizeMatchResults();
     });
 
 program.parse(process.argv);
