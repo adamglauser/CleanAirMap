@@ -12,10 +12,10 @@ const CLIView = require('./src/CLIView.js');
 var cliContext = { "locMgr":"", "searcher": "", verbose: false };
 
 const mainChoices = [
-    {title: 'Load Locations', action: 'LoadLocations'},
+    {title: 'Load Locations', action: loadLocationsAction},
     {title: 'Load cached search results', action: 'LoadResultCache'},
     {title: 'Run a search', action: 'RunSearch'},
-    {title: 'Exit', action: 'Exit'}
+    {title: 'Exit', action: exitAction}
 ]
 
 program
@@ -35,26 +35,23 @@ program
         cliContext.locMgr = new LocationManager(process.env, new V1Client(process.env), cliContext.searcher);
 
         view.showWelcome();
-        processAction(view, cliContext);
+        processAction(view, cliContext, mainChoices);
     });
 
 program.parse(process.argv);
 
-function processAction(view, cliContext) {
+function processAction(view, cliContext, choices) {
     view.showStatus(cliContext);
-    view.promptForAction(mainChoices).then((action) => {
-        if (action == "LoadLocations") {
-            cliContext.locMgr.loadLocations().then(() => { processAction(view, cliContext) });
-        }
-        else if (action == "LoadResultCache") {
-            cliContext.locMgr.loadCachedSearchResults().then(() => { processAction(view, cliContext) });
-        }
-        else if (action == "RunSearch") {
-            cliContext.locMgr.searchAll().then(() => { processAction(view, cliContext) });
-        }
-        else {
-            view.showThanks();
-        }
+    view.promptForAction(choices).then((action) => {
+        action(cliContext).then(nextChoices => {
+            processAction(view, cliContext, nextChoices);
+        });
+        // else if (action == "LoadResultCache") {
+        //     cliContext.locMgr.loadCachedSearchResults().then(() => { processAction(view, cliContext) });
+        // }
+        // else if (action == "RunSearch") {
+        //     cliContext.locMgr.searchAll().then(() => { processAction(view, cliContext) });
+        // }
     });
 }
 
@@ -72,4 +69,13 @@ function processOptions(cliContext, options) {
     else {
         cliContext.searcher = new AutoCompleter(process.env);
     }
+}
+
+async function loadLocationsAction(cliContext) {
+    cliContext.locMgr.loadLocations().then(() => {
+        return mainChoices; });
+}
+
+async function exitAction(cliContext) {
+    process.exit();
 }
