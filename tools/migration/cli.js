@@ -11,6 +11,13 @@ const CLIView = require('./src/cliView.js');
 
 var cliContext = { "locMgr":"", "searcher": "", verbose: false };
 
+const mainChoices = [
+    {title: 'Load Locations', action: 'LoadLocations'},
+    {title: 'Load cached search results', action: 'LoadResultCache'},
+    {title: 'Run a search', action: 'RunSearch'},
+    {title: 'Exit', action: 'Exit'}
+]
+
 program
     .version("0.0.1")
     .description("Migration Tool CLI")
@@ -45,7 +52,7 @@ program.parse(process.argv);
 
 function processAction(view, cliContext) {
     view.showStatus(cliContext);
-    view.promptForAction().then((action) => {
+    view.promptForAction(mainChoices).then((action) => {
         if (action == "LoadLocations") {
             cliContext.locMgr.loadLocations().then(() => { processAction(view, cliContext) });
         }

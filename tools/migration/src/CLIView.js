@@ -29,25 +29,10 @@ class CLIView {
         this.writeMessage("Thanks, bye!");
     }
 
-    async promptForAction() {
-        const nextAction = [{
-            type: 'input',
-            name: 'choice',
-            message: 'Please select an option: 1 - LoadLocations, 2 - Load Cached Search results, 3 - Run a search, 4+ - Exit ',
-        },]
-        return inquirer.prompt(nextAction).then(response => {
-            if (response.choice == '1') {
-                return "LoadLocations";
-            }
-            else if (response.choice == '2') {
-                return "LoadResultCache"
-            }
-            else if (response.choice == '3') {
-                return "RunSearch"
-            }
-            else {
-                return "Exit";
-            }
+    async promptForAction(choiceList) {
+        const prompt = this.makeInputPrompt(choiceList);
+        return inquirer.prompt(prompt).then(response => {
+            return choiceList[response.choice - 1].action;
         });
     }
 
