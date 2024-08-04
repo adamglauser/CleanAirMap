@@ -50,6 +50,23 @@ class CLIView {
             }
         });
     }
+
+    // choices = [{title: string, action: function},]
+    makeInputPrompt(choices) {
+        var message = "";
+        choices.forEach((choice, index) => {
+            // After the first choice, add a seperator
+            var seperator = (index == 0) ? "" : " | ";
+            message = `${message}${seperator}${index+1}-${choice.title}`
+        });
+        return [{
+            type: 'input',
+            name: 'choice',
+            message: message,
+        },];
+    }
+
+    
 }
 
 module.exports = CLIView;
