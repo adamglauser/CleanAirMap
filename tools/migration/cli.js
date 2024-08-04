@@ -7,7 +7,7 @@ const ReverseGeocoder = require('./src/ReverseGeocoder.js');
 const AutoCompleter = require('./src/AutoCompleter.js');
 const LocationManager = require('./src/LocationManager.js');
 const V1Client = require('./src/V1Client.js');
-const CLIView = require('./src/cliView.js');
+const CLIView = require('./src/CLIView.js');
 
 var cliContext = { "locMgr":"", "searcher": "", verbose: false };
 
