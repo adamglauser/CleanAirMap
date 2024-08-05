@@ -13,8 +13,8 @@ var cliContext = { "locMgr":"", "searcher": "", verbose: false };
 
 const mainChoices = [
     {title: 'Load Locations', action: loadLocationsAction},
-    {title: 'Load cached search results', action: 'LoadResultCache'},
-    {title: 'Run a search', action: 'RunSearch'},
+    {title: 'Load cached search results', action: loadResultCacheAction},
+    {title: 'Run a search', action: runSearchAction},
     {title: 'Exit', action: exitAction}
 ]
 
@@ -46,12 +46,6 @@ function processAction(view, cliContext, choices) {
         action(cliContext).then(nextChoices => {
             processAction(view, cliContext, nextChoices);
         });
-        // else if (action == "LoadResultCache") {
-        //     cliContext.locMgr.loadCachedSearchResults().then(() => { processAction(view, cliContext) });
-        // }
-        // else if (action == "RunSearch") {
-        //     cliContext.locMgr.searchAll().then(() => { processAction(view, cliContext) });
-        // }
     });
 }
 
@@ -73,6 +67,16 @@ function processOptions(cliContext, options) {
 
 async function loadLocationsAction(cliContext) {
     await cliContext.locMgr.loadLocations();
+    return mainChoices;
+}
+
+async function loadResultCacheAction(cliContext) {
+    await cliContext.locMgr.loadCachedSearchResults();
+    return mainChoices;
+}
+
+async function runSearchAction(cliContext) {
+    await cliContext.locMgr.searchAll();
     return mainChoices;
 }
 
