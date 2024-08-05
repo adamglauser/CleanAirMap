@@ -72,7 +72,8 @@ function processOptions(cliContext, options) {
 }
 
 async function loadLocationsAction(cliContext) {
-    return cliContext.locMgr.loadLocations().then(() => mainChoices);
+    await cliContext.locMgr.loadLocations();
+    return mainChoices;
 }
 
 async function exitAction(cliContext) {
